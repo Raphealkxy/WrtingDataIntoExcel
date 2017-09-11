@@ -5,7 +5,11 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 import org.apache.poi.hssf.usermodel.HSSFCell;
 import org.apache.poi.hssf.usermodel.HSSFCellStyle;
@@ -24,7 +28,7 @@ public class TransToExcel {
      * @param dataList  正文单元格
      * @param out  输出流
      */
-    public void exporteExcel(String title,String[] headers,String[][] dataList,OutputStream out){
+    public void exporteExcel(String title,String[] headers,List<Map<String, String>> dataList,OutputStream out){
         HSSFWorkbook workBook = new HSSFWorkbook();
         createSheet(title, headers, dataList, workBook);
         createSheet(title+"2", headers, dataList, workBook);
@@ -41,7 +45,7 @@ public class TransToExcel {
      * @param headers  表头
      * @param dataList  正文单元格
      */
-    private void createSheet(String title, String[] headers, String[][] dataList, HSSFWorkbook workBook) {
+    private void createSheet(String title, String[] headers, List<Map<String, String>> dataList, HSSFWorkbook workBook) {
         HSSFSheet sheet = workBook.createSheet(title);
 //        sheet.setDefaultColumnWidth(15);
         //设置表头和普通单元格的格式
@@ -58,14 +62,30 @@ public class TransToExcel {
      * @param sheet 表
      * @param bodyStyle 单元格格式
      */
-    private void createBody(String[][] dataList, HSSFSheet sheet, HSSFCellStyle bodyStyle) {
-        for (int a=0;a<dataList.length;a++){
+    private void createBody(List<Map<String, String>> dataList, HSSFSheet sheet, HSSFCellStyle bodyStyle) {
+        for (int a=0;a<dataList.size();a++){
             HSSFRow row = sheet.createRow(a+1);
-            for(int j=0;j<dataList[a].length;j++){
+            Map<String, String>map=dataList.get(a);
+            String []data=new String[7];
+            data[0]=map.get("端口号");
+            data[1]=map.get("报警上限");
+            data[2]=map.get("报警下限");
+            data[3]=map.get("测量参数");
+            data[4]=map.get("测量地址");
+            data[5]=map.get("记录值");
+            data[6]=map.get("记录时间");
+
+            for(int j=0;j<data.length;j++){
+           // int j=0;
+           // for (String key : map.keySet()) {
+//获取map
+           // for (String v : map.values()) {
+
                 HSSFCell cell = row.createCell(j);
                 cell.setCellStyle(bodyStyle);
-                HSSFRichTextString textString = new HSSFRichTextString(dataList[a][j]);
+                HSSFRichTextString textString = new HSSFRichTextString(data[j]);
                 cell.setCellValue(textString);
+                //j++;
             }
         }
     }
@@ -136,13 +156,36 @@ public class TransToExcel {
         TransToExcel transToExcel = new TransToExcel();
         try {
             String path = System.getProperty("user.dir");
-            OutputStream os = new FileOutputStream(path+"/学生表测试.xls");
-            String[] headers = {"姓名","年龄","学号","博客链接","时间"};
+            OutputStream os = new FileOutputStream(path+"/数据记录表.xls");
+            String[] headers = {"端口号","报警上限","报警下限","测量参数","测量地址","记录值","记录时间"};
             Date date = new Date(System.currentTimeMillis());
             SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
             String time = sdf.format(date);
-            String[][] list = {{"白滚滚上神","1000000","20100914001000000000","http://baigungun.blog.com.cn/index",time},{"天族夜华","300000","20100914002","http://yehua.com.cn/index",time}};
-            transToExcel.exporteExcel("学生表",headers,list,os);
+           // String[][] list = {{"白滚滚上神","1000000","20100914001000000000","haha","hahah","http://baigungun.blog.com.cn/index",time},{"天族夜华","300000","20100914002","haha","hahah","http://yehua.com.cn/index",time}};
+            List<Map<String, String>>datas=new ArrayList<>();
+    		Map<String,String>map=new HashMap<>();
+    		Map<String, String>map2=new HashMap<>();
+    		map.put("端口号","白滚滚上神");
+    		map.put("报警上限", "1000000");
+    		map.put("报警下限", "20100914001000000000");
+    		map.put("测量参数", "haha");
+    		map.put("测量地址", "hahah");
+    		map.put("记录值", "http://baigungun.blog.com.cn/index");
+    		map.put("记录时间", time);
+    		
+//    		map2.put("id","02");
+//    		map2.put("name", "kxy");
+//    		map2.put("pass", "0111");
+    		map2.put("端口号","白滚滚上神");
+    		map2.put("报警上限", "1000000");
+    		map2.put("报警下限", "20100914001000000000");
+    		map2.put("测量参数", "haha");
+    		map2.put("测量地址", "hahah");
+    		map2.put("记录值", "http://baigungun.blog.com.cn/index");
+    		map2.put("记录时间", time);
+    		datas.add(map);
+    		datas.add(map2);
+            transToExcel.exporteExcel("学生表",headers,datas,os);
             os.close();
 
         }catch (FileNotFoundException e){
