@@ -156,7 +156,7 @@ public class TransToExcel {
         TransToExcel transToExcel = new TransToExcel();
         try {
             String path = System.getProperty("user.dir");
-            OutputStream os = new FileOutputStream(path+"/数据记录表.xls");
+            OutputStream os = new FileOutputStream(path+"/数据记录表.xls",true);
             String[] headers = {"端口号","报警上限","报警下限","测量参数","测量地址","记录值","记录时间"};
             Date date = new Date(System.currentTimeMillis());
             SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
